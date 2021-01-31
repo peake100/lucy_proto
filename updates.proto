@@ -1,0 +1,66 @@
+syntax = "proto3";
+package lucy;
+option go_package = "github.com/peake100/lucy-go/lucy";
+
+import "cereal_proto/uuid.proto";
+import "google/protobuf/any.proto";
+import "grpeakec_proto/pkerr/error.proto";
+
+// StageID identifies the job stage an update is for.
+message StageID {
+  // id of the job this update is for
+  cereal.UUID job_id = 1;
+  // stage_index this update is for
+  uint32 stage_index = 2;
+}
+
+message StartStageUpdate {
+  // run_by is the name of the worker who ran this JobStage.
+  // @inject_tag: bson:"run_by"
+  string run_by = 2;
+}
+
+// StartStage holds information about a starting stage.
+message StartStage {
+  // stage_id is the stage identifier of the job stage to start.
+  StageID stage_id = 1;
+  // run_by is the name of the worker who ran this JobStage.
+  // @inject_tag: bson:"run_by"
+  StartStageUpdate update = 2;
+}
+
+// ProgressStageInfo holds information about a stage's progress.
+message ProgressStageUpdate {
+  // progress is the new progress value.
+  // @inject_tag: bson:"progress"
+  float progress = 1;
+}
+
+// ProgressStage holds information about a stage's progress.
+message ProgressStage {
+  // stage_id is the stage identifier of the job stage to start.
+  StageID stage_id = 1;
+
+  // progress is the progress update for this stage.
+  ProgressStageUpdate update = 2;
+}
+
+// CompleteStageInfo holds information about the result of a stage run.
+message CompleteStageUpdate {
+  // error contains error information about the job stage.
+  // @inject_tag: bson:"error"
+  pkerr.Error error = 9;
+
+  // result_data contains job completion data from the worker.
+  // @inject_tag: bson:"result_data"
+  google.protobuf.Any result_data = 10;
+}
+
+// CompleteStage holds result information about a stage run.
+message CompleteStage {
+  // stage_id is the stage identifier of the job stage to start.
+  StageID stage_id = 1;
+
+  // result is the result data of the stage.
+  CompleteStageUpdate update = 2;
+}

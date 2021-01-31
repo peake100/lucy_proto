@@ -1,0 +1,40 @@
+syntax = "proto3";
+package lucy;
+option go_package = "github.com/peake100/lucy-go/lucy";
+
+import "cereal_proto/uuid.proto";
+import "google/protobuf/empty.proto";
+import "lucy_proto/create.proto";
+import "lucy_proto/jobs.proto";
+import "lucy_proto/updates.proto";
+
+// Lucy is a service for creating and tracking jobs. The gRPC portion of the service
+// handles creating and updating jobs. Job distribution is handled through RabbitMQ.
+service Lucy {
+  // CreateBatch creates a new batch.
+  rpc CreateBatch(lucy.NewBatch) returns (cereal.UUID);
+
+  // Batch returns a single batch for a given id.
+  rpc GetBatch(cereal.UUID) returns (lucy.Batch);
+
+  // List batches lists all batches from newest to oldest.
+  rpc ListBatches(google.protobuf.Empty) returns (stream lucy.Batch);
+
+  // CreateJob creates a new job and returns an id for fetching it.
+  rpc CreateJobs(lucy.NewJobs) returns (lucy.CreatedJobs);
+
+  // GetJob fetches a single job.
+  rpc GetJob(cereal.UUID) returns (lucy.Job);
+
+  // Jobs returns a list jobs from newest to oldest.
+  rpc ListJobs(google.protobuf.Empty) returns (stream lucy.Job);
+
+  // StartStage starts a job stage.
+  rpc StartStage(lucy.StartStage) returns (google.protobuf.Empty);
+
+  // ProgressStage updates the progress on a stage.
+  rpc ProgressStage(lucy.ProgressStage) returns (google.protobuf.Empty);
+
+  // CompleteStage completes a stage with result data.
+  rpc CompleteStage(lucy.CompleteStage) returns (google.protobuf.Empty);
+}
