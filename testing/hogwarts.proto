@@ -2,7 +2,20 @@ syntax = "proto3";
 package lucy.testing;
 option go_package = "github.com/peake100/lucy-go/service/prototesting";
 
-// Student holds a student's name
+// House is an enum of Hogwarts Houses.
+enum House {
+  Gryffindor = 0;
+  Ravenclaw = 1;
+  Hufflepuff = 2;
+  Slytherin = 3;
+}
+
+// Student holds a student's name.
 message Student{
   string name = 1;
+}
+
+// Sorted holds the house the student was sorted into.
+message Sorted {
+  House house = 1;
 }

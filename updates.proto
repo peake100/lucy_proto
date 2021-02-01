@@ -4,6 +4,7 @@ option go_package = "github.com/peake100/lucy-go/lucy";
 
 import "cereal_proto/uuid.proto";
 import "google/protobuf/any.proto";
+import "google/protobuf/empty.proto";
 import "grpeakec_proto/pkerr/error.proto";
 
 // StageID identifies the job stage an update is for.
@@ -63,4 +64,34 @@ message CompleteStage {
 
   // result is the result data of the stage.
   CompleteStageUpdate update = 2;
+}
+
+// WorkerUpdate is a generic update that can be used for streaming updates quickly to
+// the server.
+message RunnerUpdate {
+  // stage_id is the stage identifier of the job stage update. If blank, the last sent
+  // stage_id will be used. This field MUST be set on the first message to a
+  // WorkerUpdates stream.
+  StageID stage_id = 1;
+
+  // update is the update to apply.
+  oneof update {
+    // start starts a stage.
+    StartStageUpdate start = 2;
+    // progress progresses a stage.
+    ProgressStageUpdate progress = 3;
+    // complete sets the result of a stage once it is done.
+    CompleteStageUpdate complete = 4;
+    // confirm prompts the server to return an empty message. If received without error,
+    // all previously sent requests have been processed.
+    google.protobuf.Empty confirm = 5;
+  }
+}
+
+// RunnerErrorDetails is set in the details of an pkerr.Error that occurs while
+// streaming RunnerUpdate values.
+message RunnerErrorDetails {
+  // UpdateNum is the number of the update that caused the error. When a Runner stream
+  // is opened, the server tracks all requests, in order, that come in starting at 0.
+  uint64 UpdateNum = 1;
 }

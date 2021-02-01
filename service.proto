@@ -26,9 +26,6 @@ service Lucy {
   // GetJob fetches a single job.
   rpc GetJob(cereal.UUID) returns (lucy.Job);
 
-  // Jobs returns a list jobs from newest to oldest.
-  rpc ListJobs(google.protobuf.Empty) returns (stream lucy.Job);
-
   // StartStage starts a job stage.
   rpc StartStage(lucy.StartStage) returns (google.protobuf.Empty);
 
@@ -37,4 +34,26 @@ service Lucy {
 
   // CompleteStage completes a stage with result data.
   rpc CompleteStage(lucy.CompleteStage) returns (google.protobuf.Empty);
+
+  // RunnerUpdate allows a job runner to stream updates to Lucy, removing the overhead
+  // of making individual rpc requests for every update.
+  //
+  // The stage_id of the first message MUST be set, but subsequent messages can omit
+  // the id when updating the same stage.
+  //
+  // Progress updates to the DB are captured and throttled, allowing only 12 updates
+  // per second to reduce load on the DB. The service will trap progress updates, then
+  // once every 1/12th of a second, send the latest received to the DB.
+  //
+  // If an error occurs, the details on the pkerr.Error will include the number of the
+  // update that caused the error. Update numbers start at 0, and are tracked in order
+  // as they are received.
+  //
+  // It is recommended that each stream only be sent a single job at a time, though this
+  // recommendation is not enforced. For workers running multiple jobs in parallel,
+  // consider opening a separate Runner for each parallel job.
+  //
+  // When The server receives a confirm request, it will send back an emtpy message
+  // confirming that all previously sent requests have been processed without error.
+  rpc Runner(stream lucy.RunnerUpdate) returns (stream google.protobuf.Empty);
 }
