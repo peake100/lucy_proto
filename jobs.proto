@@ -164,35 +164,45 @@ message Batch {
   // @inject_tag: bson:"description"
   string description = 6;
 
+  // @inject_tag: bson:"-"
+  repeated cereal.UUID jobs = 7;
+
   // job_count is the number of jobs that are part of this batch.
   // @inject_tag: bson:"job_count"
-  uint32 job_count = 7;
+  uint32 job_count = 8;
 
   // progress is the total progress on this batch from 0.0 - 1.0.
   // @inject_tag: bson:"progress"
-  float progress = 10;
+  float progress = 9;
 
   // pending_count is the number pending jobs in this batch.
   // @inject_tag: bson:"pending_count"
-  uint32 pending_count = 11;
+  uint32 pending_count = 10;
 
   // cancelled_count is the number cancelled jobs in this batch.
   // @inject_tag: bson:"cancelled_count"
-  uint32 cancelled_count = 12;
+  uint32 cancelled_count = 11;
 
   // running_count is the number running jobs in this batch.
   // @inject_tag: bson:"running_count"
-  uint32 running_count = 13;
+  uint32 running_count = 12;
 
   // completed_count is the number completed jobs in this batch.
   // @inject_tag: bson:"completed_count"
-  uint32 completed_count = 14;
+  uint32 completed_count = 13;
 
   // success_count is the number of successes this batch
   // @inject_tag: bson:"success_count"
-  uint32 success_count = 15;
+  uint32 success_count = 14;
 
   // failure count is the number of failures in this batch.
   // @inject_tag: bson:"failure_count"
-  uint32 failure_count = 16;
+  uint32 failure_count = 15;
+}
+
+// BatchJobs holds the job details for a given batch.
+message BatchJobs {
+  // jobs is the list og jobs for a batch.
+  // @inject_tag: bson:"jobs"
+  repeated Job jobs  = 1;
 }

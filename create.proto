@@ -62,9 +62,23 @@ message NewBatch {
 
   // name is the human-readable name of the batch.
   // @inject_tag: bson:"name"
-  string name = 4;
+  string name = 2;
 
   // description is the human-readable description of the batch.
   // @inject_tag: bson:"description"
-  string description = 5;
+  string description = 3;
+
+  // jobs holds the jobs for the batch. More jobs can be added after-the-fact if
+  // desired
+  // @inject_tag: bson:"jobs"
+  repeated NewJob jobs = 4;
+}
+
+// CreatedBatch returns information about a newly created batch.
+message CreatedBatch {
+  // batch_id is the uuid of the newly created batch
+  cereal.UUID batch_id = 1;
+  // job_ids are the job uuids of the newly crated jobs, in the same order they were
+  // submitted.
+  repeated cereal.UUID job_ids = 2;
 }

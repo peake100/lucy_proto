@@ -82,10 +82,11 @@ message RunnerUpdate {
     ProgressStageUpdate progress = 3;
     // complete sets the result of a stage once it is done.
     CompleteStageUpdate complete = 4;
-    // confirm prompts the server to return an empty message. If received without error,
-    // all previously sent requests have been processed.
-    google.protobuf.Empty confirm = 5;
   }
+
+  // confirm prompts the server to return an empty message. If received without error,
+  // all previously sent requests have been processed.
+  bool confirm = 5;
 }
 
 // RunnerErrorDetails is set in the details of an pkerr.Error that occurs while
@@ -94,4 +95,14 @@ message RunnerErrorDetails {
   // UpdateNum is the number of the update that caused the error. When a Runner stream
   // is opened, the server tracks all requests, in order, that come in starting at 0.
   uint64 UpdateNum = 1;
+}
+
+// CancelJobs passes a series of job ids to cancel.
+message CancelJobs {
+  repeated cereal.UUID job_ids = 1;
+}
+
+// CancelBatches passes a series of batch ids to cancel.
+message CancelBatches {
+  repeated cereal.UUID batch_ids = 1;
 }

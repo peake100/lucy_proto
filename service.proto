@@ -12,7 +12,7 @@ import "lucy_proto/updates.proto";
 // handles creating and updating jobs. Job distribution is handled through RabbitMQ.
 service Lucy {
   // CreateBatch creates a new batch.
-  rpc CreateBatch(lucy.NewBatch) returns (cereal.UUID);
+  rpc CreateBatch(lucy.NewBatch) returns (lucy.CreatedBatch);
 
   // Batch returns a single batch for a given id.
   rpc GetBatch(cereal.UUID) returns (lucy.Batch);
@@ -25,6 +25,9 @@ service Lucy {
 
   // GetJob fetches a single job.
   rpc GetJob(cereal.UUID) returns (lucy.Job);
+
+  // GetBatchJobs returns the jobs for a given batch.
+  rpc GetBatchJobs(cereal.UUID) returns (lucy.BatchJobs);
 
   // StartStage starts a job stage.
   rpc StartStage(lucy.StartStage) returns (google.protobuf.Empty);
@@ -56,4 +59,10 @@ service Lucy {
   // When The server receives a confirm request, it will send back an emtpy message
   // confirming that all previously sent requests have been processed without error.
   rpc Runner(stream lucy.RunnerUpdate) returns (stream google.protobuf.Empty);
+
+  // CancelBatch cancels all jobs in the passed batches.
+  rpc CancelBatches(lucy.CancelBatches) returns (google.protobuf.Empty);
+
+  // CancelJobs cancels all jobs listed.
+  rpc CancelJob(cereal.UUID) returns (google.protobuf.Empty);
 }
