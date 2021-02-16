@@ -12,7 +12,7 @@ message StageID {
   // id of the job this update is for
   cereal.UUID job_id = 1;
   // stage_index this update is for
-  uint32 stage_index = 2;
+  int32 stage_index = 2;
 }
 
 message StartStageUpdate {

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package lucy.testing;
-option go_package = "github.com/peake100/lucy-go/service/prototesting";
+option go_package = "github.com/peake100/lucy-go/internal/prototesting";
 
 // House is an enum of Hogwarts Houses.
 enum House {

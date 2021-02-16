@@ -1,0 +1,147 @@
+syntax = "proto3";
+package lucy.events;
+option go_package = "github.com/peake100/lucy-go/lucy/events";
+
+import "cereal_proto/uuid.proto";
+import "google/protobuf/timestamp.proto";
+import "lucy_proto/jobs.proto";
+
+// StageId contains the batch, job, and stage index of the job stage the event
+// is for.
+message StageId {
+  // batch_id is the id if the batch this stage is part of.
+  cereal.UUID batch_id = 1;
+  // job_id is the id if the job this stage is part of.
+  cereal.UUID job_id = 2;
+  // stage index is the index (starting at 0) of this stage in the job's list of stages.
+  int32 stage_index = 3;
+}
+
+// JobId contains the batch, and job of the job the event is for.
+message JobId {
+  // batch_id is the id if the batch this stage is part of.
+  cereal.UUID batch_id = 1;
+  // job_id is the id if the job this stage is part of.
+  cereal.UUID job_id = 2;
+}
+
+// BatchCreated fires when a new batch is created.
+message BatchCreated {
+  // The id of the created job.
+  cereal.UUID id = 1;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 2;
+}
+
+// BatchUpdate fires when a job batch has summary updates.
+message BatchUpdated {
+  // id is the id of the batch being updated.
+  cereal.UUID id = 1;
+
+  // job_count is the number of jobs that are part of this batch.
+  uint32 job_count = 2;
+
+  // progress is the total progress on this batch from 0.0 - 1.0.
+  float progress = 3;
+
+  // pending_count is the number pending jobs in this batch
+  uint32 pending_count = 4;
+
+  // cancelled_count is the number cancelled jobs in this batch.
+  uint32 cancelled_count = 5;
+
+  // running_count is the number running jobs in this batch.
+  uint32 running_count = 6;
+
+  // completed_count is the number completed jobs in this batch.
+  uint32 completed_count = 7;
+
+  // success_count is the number of successes this batch
+  uint32 success_count = 8;
+
+  // failure count is the number of failures in this batch.
+  uint32 failure_count = 9;
+
+  // modified is the time this update was made.
+  google.protobuf.Timestamp modified = 10;
+}
+
+// JobCreated fires when a new job is created.
+message JobCreated {
+  // The id of the created job.
+  JobId id = 1;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 2;
+}
+
+// JobCancelled fires when a new job is created.
+message JobCancelled {
+  // The id of the cancelled job.
+  JobId id = 1;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 2;
+}
+
+// JobStart fires when a job starts it's first stage.
+message JobStart {
+  // job is the identifier of the starting job.
+  JobId id = 1;
+  // run_by is the name of the worker executing the first stage.
+  string run_by = 2;
+  // run_count is the number of times this job has been run / re-run.
+  uint32 run_count = 3;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 4;
+}
+
+// JobProgress fires when a job starts it's first stage.
+message JobProgress {
+  // job is the identifier of the starting job.
+  JobId id = 1;
+  // run_by is the name of the worker executing the first stage.
+  float progress = 2;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 3;
+}
+
+// JobComplete fires when a job stage completes.
+message JobComplete {
+  // stage is the stage identifier for completing stage.
+  JobId id = 1;
+  // result is the result of the job run.
+  lucy.Result result = 2;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 3;
+}
+
+// StageStart fires when a job's progress changes
+message StageStart {
+  // stage is the stage identifier for completing stage.
+  StageId id = 1;
+  // run_by is the name of the worker executing this stage.
+  string run_by = 2;
+  // run_count is the number of times this stage has been run / re-run.
+  uint32 run_count = 3;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 4;
+}
+
+// StageProgress fires when a job's progress changes
+message StageProgress {
+  // stage is the stage identifier for progressing stage.
+  StageId id = 1;
+  // progress is the current pro
+  float progress = 2;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 3;
+}
+
+// StageComplete fires when a job stage completes.
+message StageComplete {
+  // stage is the stage identifier for completing stage.
+  StageId id = 1;
+  // result is the result of the job run.
+  lucy.Result result = 2;
+  // modified is the time this change was made.
+  google.protobuf.Timestamp modified = 3;
+}
